@@ -16,31 +16,7 @@ var resguardoExiste = "X";
 var hojaDeServicioExiste = "";
 var contadorX = 0;
 
-var updateTaskTabla2 = {
-    PartitionKey: { '_': '' },
-    RowKey: { '_': '' },
-    Timestamp: { '_': '' },
-    Area: { '_': '' },
-    Baja: { '_': '' },
-    Borrado: { '_': '' },
-    Check: { '_': '' },
-    Descripcion: { '_': '' },
-    Fecha_Fin: { '_': '' },
-    Fecha_ini: { '_': '' },
-    HojaDeServicio: { '_': '' },
-    Inmueble: { '_': '' },
-    Localidad: { '_': '' },
-    NombreEnlace: { '_': '' },
-    NombreUsuario: { '_': '' },
-    Pospuesto: { '_': '' },
-    Proyecto: { '_': '' },
-    Resguardo: { '_': '' },
-    SerieBorrada: { '_': '' },
-    Servicio: { '_': '' },
-    Status: { '_': '' },
-    Fecha_Fact: { '_': '' },
-    No_Fact: { '_': '' },
-};
+var updateTaskTabla2;
 
 //JSON tabla4:
 var tablaUsar4 = "botdyesatb04"
@@ -79,12 +55,8 @@ var finalizar = false;
 //Contador:
 var aceptCount = 0;
 var proyectoCount = 0;
-var count5 = 0;
-var count4 = 0;
-var count3 = 0;
-var count2 = 0;
-var count1 = 0;
-var count0 = 0;
+var countAprobados = 0;
+var countEntities = 0;
 var total = 0;
 
 //Programa
@@ -115,11 +87,10 @@ async function working() {
 }
 
 function promesa() {
-    return new Promise(function(resolve, reject) { //Promesa 1
+    return new Promise(function(resolve, reject) {
         tableSvc.queryEntities(tablaUsar, query, nextContinuationToken, function(error, results, response) {
             if (!error) {
                 //Recorrido por row:
-                //console.log(results);
                 results.entries.forEach(function(entry) {
 
                     updateTaskTabla2 = entry;
@@ -144,7 +115,7 @@ function promesa() {
                     }
 
                     console.log(`Aceptados: ${aceptCount}`);
-                    if (aceptCount == 5) {
+                    if (aceptCount == contadorX) {
                         //Colocación de la información:
                         if (entry['Proyecto']['_'] == proyectoTrabajando && aceptCount == contadorX) {
                             proyectoCount++;
@@ -172,125 +143,9 @@ function promesa() {
                                 }
                             });
                         }
-                        count5++;
-                    } else if (aceptCount == 4) {
-                        //Colocación de la información:
-                        if (entry['Proyecto']['_'] == proyectoTrabajando && aceptCount == contadorX) {
-                            proyectoCount++;
-                            //Tarea Tabla5:                 
-                            taskTabla5['PartitionKey']['_'] = entry['Proyecto']['_'];
-                            taskTabla5['RowKey']['_'] = entry['RowKey']['_'];
-                            taskTabla5['Asociado']['_'] = entry['PartitionKey']['_'];
-                            taskTabla5['Baja']['_'] = entry['Baja']['_'];
-                            taskTabla5['Borrado']['_'] = entry['Borrado']['_'];
-                            taskTabla5['Check']['_'] = entry['Check']['_'];
-                            taskTabla5['Resguardo']['_'] = entry['Resguardo']['_'];
-                            taskTabla5['HojaDeServicio']['_'] = entry['HojaDeServicio']['_'];
-                            tableSvc.insertOrReplaceEntity(tablaUsar5, taskTabla5, function(error, result, response) {
-                                if (!error) {
-                                    console.log("La entidad se agrego o remplazo correctamente a la tabla 5");
-                                } else {
-                                    console.log("Hay un error");
-                                }
-                            });
-                            //Tarea Tabla2:
-                            updateTaskTabla2['Status']['_'] = "Procesado";
-                            tableSvc.replaceEntity(tablaUsar, updateTaskTabla2, function(error, result, response) {
-                                if (!error) {
-                                    console.log("Se hizó un replaceEntity correctamente sobre la tabla 2.");
-                                }
-                            });
-                        }
-                        count4++;
-                    } else if (aceptCount == 3) {
-                        //Colocación de la información:
-                        if (entry['Proyecto']['_'] == proyectoTrabajando && aceptCount == contadorX) {
-                            proyectoCount++;
-                            //Tarea Tabla5:                 
-                            taskTabla5['PartitionKey']['_'] = entry['Proyecto']['_'];
-                            taskTabla5['RowKey']['_'] = entry['RowKey']['_'];
-                            taskTabla5['Asociado']['_'] = entry['PartitionKey']['_'];
-                            taskTabla5['Baja']['_'] = entry['Baja']['_'];
-                            taskTabla5['Borrado']['_'] = entry['Borrado']['_'];
-                            taskTabla5['Check']['_'] = entry['Check']['_'];
-                            taskTabla5['Resguardo']['_'] = entry['Resguardo']['_'];
-                            taskTabla5['HojaDeServicio']['_'] = entry['HojaDeServicio']['_'];
-                            tableSvc.insertOrReplaceEntity(tablaUsar5, taskTabla5, function(error, result, response) {
-                                if (!error) {
-                                    console.log("La entidad se agrego o remplazo correctamente a la tabla 5");
-                                } else {
-                                    console.log("Hay un error");
-                                }
-                            });
-                            //Tarea Tabla2:
-                            updateTaskTabla2['Status']['_'] = "Procesado";
-                            tableSvc.replaceEntity(tablaUsar, updateTaskTabla2, function(error, result, response) {
-                                if (!error) {
-                                    console.log("Se hizó un replaceEntity correctamente sobre la tabla 2.");
-                                }
-                            });
-                        }
-                        count3++;
-                    } else if (aceptCount == 2) {
-                        //Colocación de la información:
-                        if (entry['Proyecto']['_'] == proyectoTrabajando && aceptCount == contadorX) {
-                            proyectoCount++;
-                            //Tarea Tabla5:                 
-                            taskTabla5['PartitionKey']['_'] = entry['Proyecto']['_'];
-                            taskTabla5['RowKey']['_'] = entry['RowKey']['_'];
-                            taskTabla5['Asociado']['_'] = entry['PartitionKey']['_'];
-                            taskTabla5['Baja']['_'] = entry['Baja']['_'];
-                            taskTabla5['Borrado']['_'] = entry['Borrado']['_'];
-                            taskTabla5['Check']['_'] = entry['Check']['_'];
-                            taskTabla5['Resguardo']['_'] = entry['Resguardo']['_'];
-                            taskTabla5['HojaDeServicio']['_'] = entry['HojaDeServicio']['_'];
-                            tableSvc.insertOrReplaceEntity(tablaUsar5, taskTabla5, function(error, result, response) {
-                                if (!error) {
-                                    console.log("La entidad se agrego o remplazo correctamente a la tabla 5");
-                                } else {
-                                    console.log("Hay un error");
-                                }
-                            });
-                            //Tarea Tabla2:
-                            updateTaskTabla2['Status']['_'] = "Procesado";
-                            tableSvc.replaceEntity(tablaUsar, updateTaskTabla2, function(error, result, response) {
-                                if (!error) {
-                                    console.log("Se hizó un replaceEntity correctamente sobre la tabla 2.");
-                                }
-                            });
-                        }
-                        count2++;
-                    } else if (aceptCount == 1) {
-                        //Colocación de la información:
-                        if (entry['Proyecto']['_'] == proyectoTrabajando && aceptCount == contadorX) {
-                            proyectoCount++;
-                            //Tarea Tabla5:                 
-                            taskTabla5['PartitionKey']['_'] = entry['Proyecto']['_'];
-                            taskTabla5['RowKey']['_'] = entry['RowKey']['_'];
-                            taskTabla5['Asociado']['_'] = entry['PartitionKey']['_'];
-                            taskTabla5['Baja']['_'] = entry['Baja']['_'];
-                            taskTabla5['Borrado']['_'] = entry['Borrado']['_'];
-                            taskTabla5['Check']['_'] = entry['Check']['_'];
-                            taskTabla5['Resguardo']['_'] = entry['Resguardo']['_'];
-                            taskTabla5['HojaDeServicio']['_'] = entry['HojaDeServicio']['_'];
-                            tableSvc.insertOrReplaceEntity(tablaUsar5, taskTabla5, function(error, result, response) {
-                                if (!error) {
-                                    console.log("La entidad se agrego o remplazo correctamente a la tabla 5");
-                                } else {
-                                    console.log("Hay un error");
-                                }
-                            });
-                            //Tarea Tabla2:
-                            updateTaskTabla2['Status']['_'] = "Procesado";
-                            tableSvc.replaceEntity(tablaUsar, updateTaskTabla2, function(error, result, response) {
-                                if (!error) {
-                                    console.log("Se hizó un replaceEntity correctamente sobre la tabla 2.");
-                                }
-                            });
-                        }
-                        count1++;
-                    } else if (aceptCount == 0) {
-                        count0++;
+                        countAprobados++;
+                    } else {
+                        countEntities++;
                     }
                 });
             }
@@ -329,20 +184,9 @@ function resultado() {
         }
     });
 
-    if (contadorX == 5) {
-        console.log(`${count5} tienen los 5 campos Aprobados`);
-    } else if (contadorX == 4) {
-        console.log(`${count4} tienen los 4 campos Aprobados`);
-    } else if (contadorX == 3) {
-        console.log(`${count3} tienen los 3 campos Aprobados`);
-    } else if (contadorX == 2) {
-        console.log(`${count2} tienen los 2 campos Aprobados`);
-    } else if (contadorX == 1) {
-        console.log(`${count1} tienen 1 campo Aprobado`);
-    } else if (contadorX == 0) {
-        console.log(`${count0} no tienen ningun Aprobado`);
-    }
-    total = count0 + count1 + count2 + count3 + count4 + count5;
+    console.log(`${countAprobados} entidades corresponden con los criterios.`);
+
+    total = countAprobados + countEntities;
     console.log(`Total de campos analizados: ${total}`);
     console.log(`Se esta buscando ${contadorX} documentos en el proyecto.`);
     console.log(`${proyectoCount} corresponden con el proyecto.`);
