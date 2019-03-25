@@ -8,11 +8,11 @@ var tableSvc = azure.createTableService(azure2.myaccount, azure2.myaccesskey);
 //Tabla origen:
 var tablaUsar = "botdyesatb02"
 
-var proyectoTrabajando = "INAH3";
+var proyectoTrabajando = "HOLIDAY-IMP";
 var bajaExiste = "";
-var borradoExiste = "X";
-var checkExiste = "X";
-var resguardoExiste = "X";
+var borradoExiste = "";
+var checkExiste = "";
+var resguardoExiste = "";
 var hojaDeServicioExiste = "";
 var contadorX = 0;
 
@@ -20,17 +20,7 @@ var updateTaskTabla2;
 
 //JSON tabla4:
 var tablaUsar4 = "botdyesatb04"
-var taskTabla4 = {
-    PartitionKey: { '_': 'Proyecto' },
-    RowKey: { '_': 'NombreProyecto' },
-    Timestamp: { '_': '' },
-    NumDoc: { '_': 0 },
-    Baja: { '_': '' },
-    Borrado: { '_': '' },
-    Check: { '_': '' },
-    Resguardo: { '_': '' },
-    HojaDeServicio: { '_': '' },
-};
+var taskTabla4;
 
 //JSON tabla5:
 var tablaUsar5 = "botdyesatb05"
@@ -62,22 +52,46 @@ var total = 0;
 //Programa
 async function working() {
 
-    //Contador de X:
-    if (bajaExiste == "X") {
-        contadorX++;
-    }
-    if (borradoExiste == "X") {
-        contadorX++;
-    }
-    if (checkExiste == "X") {
-        contadorX++;
-    }
-    if (resguardoExiste == "X") {
-        contadorX++;
-    }
-    if (hojaDeServicioExiste == "X") {
-        contadorX++;
-    }
+    //Lectura de tabla 4;
+    tableSvc.retrieveEntity(tablaUsar4, "Proyecto", proyectoTrabajando, function(error, result, response) {
+        if (!error) {
+
+            taskTabla4 = result;
+
+            if (result['Baja']['_'] == "X") {
+                bajaExiste = "X";
+            }
+            if (result['Borrado']['_'] == "X") {
+                borradoExiste = "X";
+            }
+            if (result['Check']['_'] == "X") {
+                checkExiste = "X";
+            }
+            if (result['Resguardo']['_'] == "X") {
+                resguardoExiste = "X";
+            }
+            if (result['HojaDeServicio']['_'] == "X") {
+                hojaDeServicioExiste = "X";
+            }
+
+            //Contador de X:
+            if (bajaExiste == "X") {
+                contadorX++;
+            }
+            if (borradoExiste == "X") {
+                contadorX++;
+            }
+            if (checkExiste == "X") {
+                contadorX++;
+            }
+            if (resguardoExiste == "X") {
+                contadorX++;
+            }
+            if (hojaDeServicioExiste == "X") {
+                contadorX++;
+            }
+        }
+    });
 
     //Bucle:
     do {
@@ -119,7 +133,7 @@ function promesa() {
                         //Colocación de la información:
                         if (entry['Proyecto']['_'] == proyectoTrabajando && aceptCount == contadorX) {
                             proyectoCount++;
-                            //Tarea Tabla5:                 
+                            //Tarea Tabla5: 
                             taskTabla5['PartitionKey']['_'] = entry['Proyecto']['_'];
                             taskTabla5['RowKey']['_'] = entry['RowKey']['_'];
                             taskTabla5['Asociado']['_'] = entry['PartitionKey']['_'];
@@ -166,14 +180,8 @@ function promesa() {
 
 //Funcion que se ejecuta el final del programa:
 function resultado() {
-    taskTabla4['PartitionKey']['_'] = "Proyecto";
-    taskTabla4['RowKey']['_'] = proyectoTrabajando;
+    //Modificando tabla 4:
     taskTabla4['NumDoc']['_'] = proyectoCount;
-    taskTabla4['Baja']['_'] = bajaExiste;
-    taskTabla4['Borrado']['_'] = borradoExiste;
-    taskTabla4['Check']['_'] = checkExiste;
-    taskTabla4['Resguardo']['_'] = resguardoExiste;
-    taskTabla4['HojaDeServicio']['_'] = hojaDeServicioExiste;
 
     //Remplazar tablara 4 con su contenido y modificando unicamente el conteo actual:
     tableSvc.insertOrReplaceEntity(tablaUsar4, taskTabla4, function(error, result, response) {
