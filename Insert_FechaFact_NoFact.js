@@ -52,14 +52,6 @@ var task = { //JSON base
 
 //Programa
 async function working() {
-
-    //Nobrar celda:
-    worksheet.getCell(`A${celdaActual}`).value = 'RowKey';
-    celdaActual++;
-
-    //Reiniciar token:
-    nextContinuationToken = null
-
     //Bucle:
     do {
         await promesa();
