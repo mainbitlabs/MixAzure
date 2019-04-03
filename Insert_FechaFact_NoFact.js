@@ -1,5 +1,9 @@
+//Path
+var libroPath = "./Operacion.xlsx";
+
 //Paquetes:
 var azure = require('azure-storage');
+const XLSX = require('xlsx');
 
 //Crear conexión:
 var azure2 = require('./keys_azure'); //Importación de llaves
@@ -15,7 +19,7 @@ var query = new azure.TableQuery();
 var nextContinuationToken = null;
 
 //Tabla origen:
-var tablaUsar = "botdyesatb01";
+var tablaUsar = "botdyesatb02";
 
 //Variables:
 var contador = 0;
@@ -52,6 +56,10 @@ var task = { //JSON base
 
 //Programa
 async function working() {
+
+    //Reiniciar token:
+    nextContinuationToken = null
+
     //Bucle:
     do {
         await promesa();
@@ -67,7 +75,7 @@ function promesa() {
                 results.entries.forEach(function(entry) {
 
                     //Bluque que analiza Azure Table:
-                    if (entry['Proyecto']['_'] == "INAH3") {
+                    if (entry['Proyecto']['_'] == "OperacionInterna") {
 
                         //Blucle que analiza Excel:
                         for (var key in data) {
@@ -90,7 +98,6 @@ function promesa() {
 
                                 //Aumentamos la celda para trabajar en la siguiente y sumamos un contador para conocer
                                 //el resultado por log:
-                                celdaActual++
                                 contador++;
                             }
                         }
