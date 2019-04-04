@@ -5,13 +5,13 @@ var azure = require('azure-storage');
 var azure2 = require('./keys_azure'); //Importación de llaves
 var tableSvc = azure.createTableService(azure2.myaccount, azure2.myaccesskey);
 
-//Query:
+//Query con filtro para obtener entidades de la tabla 5 sin No_Fact:
 var query = new azure.TableQuery()
     .where('No_Fact eq ?', '');
 var nextContinuationToken = null;
 
 //Tabla origen:
-var tabla1 = "botdyesatb01";
+var tabla1 = "botdyesatb02";
 var tabla5 = "botdyesatb05";
 
 //Variables:
@@ -19,50 +19,42 @@ var contador = 0;
 var finalizar = false;
 
 //No es necesario completar el JSON, puede esta vacio por que toma el valor
-//de la entidad durante el programa, pero tenerlo así sirve de guia par atrabajar:
+//de la entidad durante el programa, pero tenerlo así sirve de guia para trabajar:
 var task = {
     PartitionKey: { '_': '' },
     RowKey: { '_': '' },
     No_Fact: { '_': '' },
 }
 
-//Programa
-async function working() {
-
-    //Reiniciar token:
-    nextContinuationToken = null
-
-    //Bucle:
-    do {
-        await promesa();
-    } while (finalizar == false);
-    resultado();
-}
-
+//Programa:
 async function promesa() {
     return new Promise(function(resolve, reject) {
         //Blucle Tabla5:
         tableSvc.queryEntities(tabla5, query, nextContinuationToken, function(error, results, response) {
             if (!error) {
                 results.entries.forEach(function(entry) {
-
                     //Obtener entidad tabla 1:
                     tableSvc.retrieveEntity(tabla1, `${entry['Asociado']['_']}`, `${entry['RowKey']['_']}`, function(error2, result, response2) {
                         if (!error2) {
-                            if (result['No_Fact']['_'] != "") {
-                                console.log(`Se encontro ${entry['RowKey']['_']} - ${result['RowKey']['_']}`);
+                            //Confirmar si en la Tabla 2 hay No_Fact:
+                            if (result['No_Fact']['_'] != "" && result['Status']['_'] == "Procesado") {
+                                //Contar entidades actualizadas:
+                                console.log(`Actualizando entidad con la serie ${result['RowKey']['_']}`);
+                                contador++;
+
+                                //Colocar datos para unir el JSON con la Entidad:
                                 task['PartitionKey']['_'] = result['Proyecto']['_'];
                                 task['RowKey']['_'] = result['RowKey']['_'];
                                 task['No_Fact']['_'] = result['No_Fact']['_'];
 
+                                //Unir JSON con la entiadad:
                                 tableSvc.mergeEntity(tabla5, task, function(errorMerge, resultMerge, responseMerge) {
                                     if (!errorMerge) {
-                                        console.log("Entidad unida correctamente.");
-                                        contador++;
+                                        //Trabajando correctamente...
+                                    } else {
+                                        console.log("Hay un error.");
                                     }
                                 });
-                            } else {
-                                console.log(`${result['RowKey']['_']} no tiene No_Fact`);
                             }
                         }
                     });
@@ -84,8 +76,22 @@ async function promesa() {
 }
 
 //Funcion que se ejecuta el final del programa:
-function resultado() {
+async function resultado() {
     console.log(`Se modificaron ${contador} entidades.`);
+}
+
+//Programa
+async function working() {
+
+    //Reiniciar token:
+    nextContinuationToken = null
+
+    //Bucle:
+    do {
+        await promesa();
+    } while (finalizar == false);
+
+    resultado();
 }
 
 //Inicia el trabajo:

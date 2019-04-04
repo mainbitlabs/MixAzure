@@ -55,7 +55,7 @@ function promesa() {
                 results.entries.forEach(function(entry) {
                     if (entry['No_Fact']['_'] == "") {
                         if (contadorSeriesMax <= 100) {
-                            //Excel:
+                            //Escribir entidad en Excel:
                             worksheet.getCell(`A${celdaActual}`).value = entry['Asociado']['_'];
                             worksheet.getCell(`B${celdaActual}`).value = entry['RowKey']['_'];
                             worksheet.getCell(`C${celdaActual}`).value = entry['PartitionKey']['_'];
@@ -63,6 +63,7 @@ function promesa() {
                             contadorSeriesMax++;
                         }
                     }
+                    //Contador de entidades analizadas:
                     contador++;
                 });
             }
@@ -90,7 +91,7 @@ async function sendMail() {
             from: 'lrosas@mainbit.com.mx',
             to: "lrosas@mainbit.com.mx",
             subject: 'Correo con Series',
-            html: `Buen día </br></br>Las series contenidas en este documento adjunto, han sido 
+            html: `Buen día </br></br>Las series contenidas en este documento adjunto han sido 
             valoradas bajo los criterios de selección de cada proyecto. </br> Favor de considerar 
             las mismas para la solicitud de la factura. </br> </br> Reportar cualquier incidente a: 
             </br><strong>mjimenez@mainbit.com</strong> </br><strong>esanchezl@mainbit.com</strong>`,
@@ -105,6 +106,7 @@ async function sendMail() {
     });
 }
 
+//Función para guardar el libro creado con los datos extraidos por el programa:
 async function guardarExcel() {
     return new Promise(function(resolve, reject) {
         workbookFinal.xlsx.writeFile('series.xlsx').then(function() { //Puedes colocar cualquier nombre al archivo final sustituyendo "final.xlsx" (recuerda respetar siempre la extención .xlsx).

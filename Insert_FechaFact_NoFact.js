@@ -67,17 +67,18 @@ async function working() {
     resultado();
 }
 
+//Programa:
 function promesa() {
-    return new Promise(function(resolve, reject) { //Promesa 1
+    return new Promise(function(resolve, reject) {
 
         tableSvc.queryEntities(tablaUsar, query, nextContinuationToken, function(error, results, response) {
             if (!error) {
-                results.entries.forEach(function(entry) {
 
-                    //Bluque que analiza Azure Table:
+                //Bucle que analiza Azure Table:
+                results.entries.forEach(function(entry) {
                     if (entry['Proyecto']['_'] == "OperacionInterna") {
 
-                        //Blucle que analiza Excel:
+                        //Bucle que analiza Excel:
                         for (var key in data) {
                             if (entry['RowKey']['_'] == data[key]['RowKey']) {
                                 console.log(`Coincide ${entry['RowKey']['_']} - ${data[key]['RowKey']}`);
