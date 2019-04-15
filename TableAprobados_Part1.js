@@ -24,22 +24,6 @@ var taskTabla4 = {
     NumDoc: { '_': '' }
 };
 
-//JSON tabla5:
-var tablaUsar5 = "botdyesatb05"
-var taskTabla5 = {
-    PartitionKey: { '_': 'Proyecto' },
-    RowKey: { '_': 'Serie' },
-    Timestamp: { '_': '' },
-    Asociado: { '_': '' },
-    Baja: { '_': '' },
-    Borrado: { '_': '' },
-    Check: { '_': '' },
-    Resguardo: { '_': '' },
-    HojaDeServicio: { '_': '' },
-    Status: { '_': '' },
-    No_Fact: { '_': '' }
-};
-
 //Query:
 var query = new azure.TableQuery()
     .where('Proyecto eq ?', proyectoTrabajando);
@@ -88,26 +72,7 @@ function promesa() {
                         if (aceptCount == contadorX && entry['Status']['_'] != "Procesado") {
                             updateTaskTabla2 = entry;
                             proyectoCount++;
-                            //Tarea Tabla5: 
-                            taskTabla5['PartitionKey']['_'] = entry['Proyecto']['_'];
-                            taskTabla5['RowKey']['_'] = entry['RowKey']['_'];
-                            taskTabla5['Asociado']['_'] = entry['PartitionKey']['_'];
-                            taskTabla5['Baja']['_'] = entry['Baja']['_'];
-                            taskTabla5['Borrado']['_'] = entry['Borrado']['_'];
-                            taskTabla5['Check']['_'] = entry['Check']['_'];
-                            taskTabla5['Resguardo']['_'] = entry['Resguardo']['_'];
-                            taskTabla5['HojaDeServicio']['_'] = entry['HojaDeServicio']['_'];
-                            taskTabla5['No_Fact']['_'] = entry['No_Fact']['_'];
                             if (falla == false) {
-                                tableSvc.insertOrMergeEntity(tablaUsar5, taskTabla5, function(error, result, response) {
-                                    if (!error) {
-                                        console.log("La entidad se agrego o remplazo correctamente a la tabla 5");
-                                    } else {
-                                        console.log(`Hay un error`);
-                                        falla == true;
-                                    }
-
-                                });
                                 //Tarea Tabla2:
                                 updateTaskTabla2['Status']['_'] = "Procesado";
                                 tableSvc.mergeEntity(tablaUsar, updateTaskTabla2, function(error, result, response) {
