@@ -54,6 +54,66 @@ var countAprobados = 0;
 var countEntities = 0;
 var total = 0;
 
+//Programa
+async function working() {
+
+    //Lectura de tabla 4;
+    tableSvc.retrieveEntity(tablaUsar4, "Proyecto", proyectoTrabajando, function(error, result, response) {
+        if (!error) {
+
+            taskTabla4 = result;
+
+            if (result['Baja']['_'] == "X") {
+                bajaExiste = "X";
+            }
+            if (result['Borrado']['_'] == "X") {
+                borradoExiste = "X";
+            }
+            if (result['Check']['_'] == "X") {
+                checkExiste = "X";
+            }
+            if (result['Resguardo']['_'] == "X") {
+                resguardoExiste = "X";
+            }
+            if (result['HojaDeServicio']['_'] == "X") {
+                hojaDeServicioExiste = "X";
+            }
+
+            //Contador de X:
+            if (bajaExiste == "X") {
+                contadorX++;
+            }
+            if (borradoExiste == "X") {
+                contadorX++;
+            }
+            if (checkExiste == "X") {
+                contadorX++;
+            }
+            if (resguardoExiste == "X") {
+                contadorX++;
+            }
+            if (hojaDeServicioExiste == "X") {
+                contadorX++;
+            }
+        }
+    });
+
+    Bucle();
+}
+
+async function Bucle() {
+    //Bucle:
+    await promesa();
+    if (falla == false) {
+        if (finalizar == false) {
+            setTimeout(function() { Bucle() }, 10000);
+        } else {
+            setTimeout(function() { resultado() }, 10000);
+        }
+    } else {
+        console.log('El programa se ha detenido por que se ha detectado un error, vuelva a intentalo.');
+    }
+}
 
 
 function promesa() {
@@ -159,67 +219,6 @@ function resultado() {
     console.log(`Total de campos analizados: ${total}`);
     console.log(`Se esta buscando ${contadorX} documentos en el proyecto.`);
     console.log(`${proyectoCount} corresponden con el proyecto.`);
-}
-
-//Programa
-async function working() {
-
-    //Lectura de tabla 4;
-    tableSvc.retrieveEntity(tablaUsar4, "Proyecto", proyectoTrabajando, function(error, result, response) {
-        if (!error) {
-
-            taskTabla4 = result;
-
-            if (result['Baja']['_'] == "X") {
-                bajaExiste = "X";
-            }
-            if (result['Borrado']['_'] == "X") {
-                borradoExiste = "X";
-            }
-            if (result['Check']['_'] == "X") {
-                checkExiste = "X";
-            }
-            if (result['Resguardo']['_'] == "X") {
-                resguardoExiste = "X";
-            }
-            if (result['HojaDeServicio']['_'] == "X") {
-                hojaDeServicioExiste = "X";
-            }
-
-            //Contador de X:
-            if (bajaExiste == "X") {
-                contadorX++;
-            }
-            if (borradoExiste == "X") {
-                contadorX++;
-            }
-            if (checkExiste == "X") {
-                contadorX++;
-            }
-            if (resguardoExiste == "X") {
-                contadorX++;
-            }
-            if (hojaDeServicioExiste == "X") {
-                contadorX++;
-            }
-        }
-    });
-
-    Bucle();
-}
-
-async function Bucle() {
-    //Bucle:
-    await promesa();
-    if (falla == false) {
-        if (finalizar == false) {
-            setTimeout(function() { Bucle() }, 10000);
-        } else {
-            setTimeout(function() { resultado() }, 10000);
-        }
-    } else {
-        console.log('El programa se ha detenido por que se ha detectado un error, vuelva a intentalo.');
-    }
 }
 
 //Inicia el trabajo:
